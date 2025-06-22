@@ -84,7 +84,7 @@ def particao(l, inf, sup, d):
 
 def chave_ord(chave, d):
     nome, data, reps, tempo = d[chave]
-    nome_min = nome.lower()
+    nome_min = nome#.lower()
     return (-reps, tempo, nome_min, chave)
 
 def finalistas0(d,l):
