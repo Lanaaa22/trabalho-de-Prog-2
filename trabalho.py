@@ -34,7 +34,7 @@ def categoria(data):
         return 2
     
 def leDicionario():
-    with open("entrada1000000.bin", "rb") as f:
+    with open("entrada10000.bin", "rb") as f:
         dic = pickle.load(f)
     return dic
 
@@ -84,7 +84,8 @@ def particao(l, inf, sup, d):
 
 def chave_ord(chave, d):
     nome, data, reps, tempo = d[chave]
-    return (-reps, tempo, nome.upper(), chave)
+    nome_min = nome.lower()
+    return (-reps, tempo, nome_min, chave)
 
 def finalistas0(d,l):
     aux = 1
@@ -100,15 +101,17 @@ def finalistas0(d,l):
                 pos+=1
             else:
                 adicionaArquivo(d,l,posicao, "SUB20", primeiraVez,pos)
-                if pos <= vagas:
-                    pos+=1
-                    if pos == vagas:
-                        ultimoPont = posicao
-                        while d[l[ultimoPont]][2] == d[l[posicao + aux]][2] and d[l[ultimoPont]][3] == d[l[posicao + aux]][3]:
-                            if aux == 2:
-                                pos+=1
-                            adicionaArquivo(d,l,posicao + aux, "SUB20", primeiraVez,pos)
-                            aux +=1
+                pos+=1
+                if pos == vagas:
+                    ultimoPont = posicao
+                    if d[l[ultimoPont]][2] != d[l[posicao+aux]][2] or d[l[ultimoPont]][3] != d[l[posicao+aux]][3]:
+                        adicionaArquivo(d,l,posicao+aux, "SUB20", primeiraVez,pos)
+                    while d[l[ultimoPont]][2] == d[l[posicao + aux]][2] and d[l[ultimoPont]][3] == d[l[posicao + aux]][3]:
+                        if aux == 2:
+                            pos+=1
+                        adicionaArquivo(d,l,posicao + aux, "SUB20", primeiraVez,pos)
+                        aux +=1
+                    return
 
 
 def finalistas1(d,l):
@@ -126,15 +129,17 @@ def finalistas1(d,l):
                 pos+=1
             else:
                 adicionaArquivo(d,l,posicao, "20-39", primeiraVez,pos)
-                if pos <= vagas:
-                    pos+=1
-                    if pos == vagas:
-                        ultimoPont = posicao
-                        while d[l[ultimoPont]][2] == d[l[posicao + aux]][2] and d[l[ultimoPont]][3] == d[l[posicao + aux]][3]:
-                            if aux == 2:
-                                pos+=1
-                            adicionaArquivo(d,l,posicao + aux, "20-39", primeiraVez,pos)
-                            aux +=1
+                pos+=1
+                if pos == vagas:
+                    ultimoPont = posicao+aux
+                    if d[l[ultimoPont]][2] != d[l[posicao+aux]][2] or d[l[ultimoPont]][3] != d[l[posicao+aux]][3]:
+                        adicionaArquivo(d,l,posicao+aux, "20-39", primeiraVez,pos)
+                    while d[l[ultimoPont]][2] == d[l[posicao + aux]][2] and d[l[ultimoPont]][3] == d[l[posicao + aux]][3]:
+                        if aux == 2:
+                            pos+=1
+                        adicionaArquivo(d,l,posicao + aux, "20-39", primeiraVez,pos)
+                        aux +=1
+                    return
 
 
 
@@ -154,25 +159,26 @@ def finalistas2(d,l):
                     pos+=1
             else:
                 adicionaArquivo(d,l,posicao, "40+", primeiraVez,pos)
-                if pos <= vagas:
-                    pos+=1
-                    if pos == vagas:
-                        ultimoPont = posicao
-                        while d[l[ultimoPont]][2] == d[l[posicao+aux]][2] and d[l[ultimoPont]][3] == d[l[posicao+aux]][3]:
-                            if aux == 2:
-                                pos+=1
-                            adicionaArquivo(d,l,posicao + aux, "40+", primeiraVez,pos)
-                            aux +=1
-                        return
+                pos+=1
+                if pos == vagas:
+                    ultimoPont = posicao+aux
+                    if d[l[ultimoPont]][2] != d[l[posicao+aux]][2] or d[l[ultimoPont]][3] != d[l[posicao+aux]][3]:
+                        adicionaArquivo(d,l,posicao+aux, "40+", primeiraVez,pos)
+                    while d[l[ultimoPont]][2] == d[l[posicao+aux]][2] and d[l[ultimoPont]][3] == d[l[posicao+aux]][3]:#printa os empatados
+                        if aux == 2:
+                            pos+=1
+                        adicionaArquivo(d,l,posicao + aux, "40+", primeiraVez,pos)
+                        aux +=1
+                    return
                             
     
-#NAO ESTÁ FUNCIONANDO COMO DEVERIA
+#FUNCIONANDO
 def adicionaArquivo(d,l,i,categoria,primeiraVez,pos):
     chave = l[i]
     f = open("saida.txt", "a")
     if primeiraVez:
-        f.write(f"Classificados {categoria}: \n")
-    f.write(f"{pos}. {chave} ({d[chave][0]}): {d[chave][2]} reps, {d[chave][3]}s \n")
+        f.write(f"Classificados {categoria}:\n")
+    f.write(f"{pos}. {chave} ({d[chave][0]}): {d[chave][2]} reps, {d[chave][3]}s\n")
     f.close()
 
 def main():  
@@ -186,22 +192,7 @@ def main():
   
     quickSort(l,cat1+cat0,len(l)-1,d)#ordenando 40+
     
-    """
-    print ("sub20 =",cat0)
-    print ("20 a 30 =",cat1)
-    print ("40+ =",cat2)
-    print("\n--- SUB 20 ---")
-    for chave in l[:cat0]:
-        print(d[chave])
 
-    print("\n--- 20 A 39 ---")
-    for chave in l[cat0:cat1+cat0]:
-        print(d[chave])
-
-    print("\n--- 40+ ---")
-    for chave in l[cat1+cat0:len(l)]:
-        print(d[chave])
-    """
     open("saida.txt", "w").close()
     finalistas0(d,l)
     finalistas1(d,l)
