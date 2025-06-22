@@ -95,10 +95,21 @@ def finalistas0(d,l):
     for posicao in range(cat0):
         if posicao < vagas:
             if primeiraVez:
-                adicionaArquivo(d,l,posicao, "SUB20", primeiraVez)
+                pos = 1
+                adicionaArquivo(d,l,posicao, "SUB20", primeiraVez,pos)
                 primeiraVez = False
+                pos+=1
             else:
-                adicionaArquivo(d,l,posicao, "SUB20", primeiraVez)
+                adicionaArquivo(d,l,posicao, "SUB20", primeiraVez,pos)
+                if pos <= vagas:
+                    pos+=1
+                    if pos == vagas:
+                        aux = 1
+                        while d[l[vagas+cat0]][2] == d[l[vagas+cat0+aux]][2] and d[l[vagas+cat0]][3] == d[l[vagas+cat0+aux]][3]:
+                            if aux == 2:
+                                pos+=1
+                            adicionaArquivo(d,l,posicao + aux, "SUB20", primeiraVez,pos)
+                            aux +=1
 
 
 def finalistas1(d,l):
@@ -109,33 +120,63 @@ def finalistas1(d,l):
     for posicao in range(cat0,cat1+cat0):
         if posicao - inicio < vagas:
             if primeiraVez:
-                adicionaArquivo(d,l,posicao, "20-39", primeiraVez)
+                pos = 1
+                adicionaArquivo(d,l,posicao, "20-39", primeiraVez,pos)
                 primeiraVez = False
+                pos+=1
             else:
-                adicionaArquivo(d,l,posicao, "20-39", primeiraVez)
+                adicionaArquivo(d,l,posicao, "20-39", primeiraVez,pos)
+                if pos <= vagas:
+                    pos+=1
+                    if pos == vagas:
+                        aux = 1
+                        while d[l[vagas+cat0]][2] == d[l[vagas+cat0+aux]][2] and d[l[vagas+cat0]][3] == d[l[vagas+cat0+aux]][3]:
+                            if aux == 2:
+                                pos+=1
+                            adicionaArquivo(d,l,posicao + aux, "20-39", primeiraVez,pos)
+                            aux +=1
+
 
 
             
 def finalistas2(d,l):
+    aux = 1
     primeiraVez = True
     __,cat0,cat1,cat2 = criarLista(d)
     inicio = cat0+cat1
     vagas = math.ceil(cat2*(1/3))
+    pos = 1
     for posicao in range(cat1+cat0,len(l)):
         if posicao - inicio < vagas: #2
             if primeiraVez:
-                    adicionaArquivo(d,l,posicao, "40+", primeiraVez)
+                    adicionaArquivo(d,l,posicao, "40+", primeiraVez,pos)
                     primeiraVez = False
+                    pos+=1
             else:
-                adicionaArquivo(d,l,posicao, "40+", primeiraVez)
+                adicionaArquivo(d,l,posicao, "40+", primeiraVez,pos)
+                if pos <= vagas:
+                    pos+=1
+                    if pos == vagas:
+                        ultimoPont = posicao
+                        print(posicao)
+                        while d[l[ultimoPont]][2] == d[l[posicao]][2] and d[l[ultimoPont]][3] == d[l[posicao]][3]: #MUDAR ISSO AQUI 
+                            print(aux)
+                            if aux == 2:
+                                pos+=1
+                            aux +=1
+                            print(aux)
+                            print(posicao)
+                            adicionaArquivo(d,l,posicao + aux, "40+", primeiraVez,pos)
+                        return
+                            
     
 #NAO ESTÁ FUNCIONANDO COMO DEVERIA
-def adicionaArquivo(d,l,i,categoria,primeiraVez):
+def adicionaArquivo(d,l,i,categoria,primeiraVez,pos):
     chave = l[i]
     f = open("saida.txt", "a")
     if primeiraVez:
         f.write(f"Classificados {categoria}: \n")
-    f.write(f"{chave} ({d[chave][0]}): {d[chave][2]} reps, {d[chave][3]}s \n")
+    f.write(f"{pos}. {chave} ({d[chave][0]}): {d[chave][2]} reps, {d[chave][3]}s \n")
     f.close()
 
 def main():  
