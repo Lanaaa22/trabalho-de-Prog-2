@@ -34,14 +34,13 @@ def categoria(data):
         return 2
     
 def leDicionario():
-    with open("entrada100000.bin", "rb") as f:
+    with open("entrada1000000.bin", "rb") as f:
         dic = pickle.load(f)
     return dic
 
 def criarLista(d):
     cat0 = 0
     cat1 = 0
-    cat2 = 0
     l = []
     for chave in d:
         if categoria(d[chave][1]) == 0:
@@ -53,14 +52,13 @@ def criarLista(d):
             l.append(chave)
     for chave in d:
         if categoria(d[chave][1]) == 2:
-            cat2 += 1
             l.append(chave)
     """
     for key in l:
         print(d[key])
     """
     
-    return l,cat0,cat1,cat2
+    return l,cat0,cat1
 
 def quickSort(l, inf, sup, d): 
     if inf < sup:
@@ -89,8 +87,9 @@ def chave_ord(chave, d):
     return (-reps, tempo, nome.upper(), chave)
 
 def finalistas0(d,l):
+    aux = 1
     primeiraVez = True
-    __,cat0,__,__ = criarLista(d)
+    __,cat0,__, = criarLista(d)
     vagas = math.ceil(cat0*(1/3))
     for posicao in range(cat0):
         if posicao < vagas:
@@ -104,8 +103,8 @@ def finalistas0(d,l):
                 if pos <= vagas:
                     pos+=1
                     if pos == vagas:
-                        aux = 1
-                        while d[l[vagas+cat0]][2] == d[l[vagas+cat0+aux]][2] and d[l[vagas+cat0]][3] == d[l[vagas+cat0+aux]][3]:
+                        ultimoPont = posicao
+                        while d[l[ultimoPont]][2] == d[l[posicao + aux]][2] and d[l[ultimoPont]][3] == d[l[posicao + aux]][3]:
                             if aux == 2:
                                 pos+=1
                             adicionaArquivo(d,l,posicao + aux, "SUB20", primeiraVez,pos)
@@ -113,8 +112,9 @@ def finalistas0(d,l):
 
 
 def finalistas1(d,l):
+    aux = 1
     primeiraVez = True
-    __,cat0,cat1,__ = criarLista(d)
+    __,cat0,cat1 = criarLista(d)
     inicio = cat0
     vagas = math.ceil(cat1*(1/3))
     for posicao in range(cat0,cat1+cat0):
@@ -129,8 +129,8 @@ def finalistas1(d,l):
                 if pos <= vagas:
                     pos+=1
                     if pos == vagas:
-                        aux = 1
-                        while d[l[vagas+cat0]][2] == d[l[vagas+cat0+aux]][2] and d[l[vagas+cat0]][3] == d[l[vagas+cat0+aux]][3]:
+                        ultimoPont = posicao
+                        while d[l[ultimoPont]][2] == d[l[posicao + aux]][2] and d[l[ultimoPont]][3] == d[l[posicao + aux]][3]:
                             if aux == 2:
                                 pos+=1
                             adicionaArquivo(d,l,posicao + aux, "20-39", primeiraVez,pos)
@@ -142,9 +142,9 @@ def finalistas1(d,l):
 def finalistas2(d,l):
     aux = 1
     primeiraVez = True
-    __,cat0,cat1,cat2 = criarLista(d)
+    __,cat0,cat1 = criarLista(d)
     inicio = cat0+cat1
-    vagas = math.ceil(cat2*(1/3))
+    vagas = math.ceil((len(l)-cat0-cat1)*(1/3))
     pos = 1
     for posicao in range(cat1+cat0,len(l)):
         if posicao - inicio < vagas: #2
@@ -158,15 +158,11 @@ def finalistas2(d,l):
                     pos+=1
                     if pos == vagas:
                         ultimoPont = posicao
-                        print(posicao)
-                        while d[l[ultimoPont]][2] == d[l[posicao]][2] and d[l[ultimoPont]][3] == d[l[posicao]][3]: #MUDAR ISSO AQUI 
-                            print(aux)
+                        while d[l[ultimoPont]][2] == d[l[posicao+aux]][2] and d[l[ultimoPont]][3] == d[l[posicao+aux]][3]:
                             if aux == 2:
                                 pos+=1
-                            aux +=1
-                            print(aux)
-                            print(posicao)
                             adicionaArquivo(d,l,posicao + aux, "40+", primeiraVez,pos)
+                            aux +=1
                         return
                             
     
@@ -182,7 +178,7 @@ def adicionaArquivo(d,l,i,categoria,primeiraVez,pos):
 def main():  
     
     d = leDicionario()
-    l,cat0,cat1,cat2 = criarLista(d)
+    l,cat0,cat1 = criarLista(d)
 
     quickSort(l,0,cat0-1,d)#ordenando sub20
 
